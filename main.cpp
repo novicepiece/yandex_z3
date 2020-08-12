@@ -14,7 +14,6 @@ enum testType
     ttC,
     ttD,
     ttE,
-    ttUsual,
     ttBrute
 };
 
@@ -89,7 +88,7 @@ int countScore(const std::vector<bool> &activated)
     }
 }
 
-void generateTest(const std::string& output_file = "input.txt", const testType test_type = ttUsual)
+void generateTest(const std::string& output_file = "input.txt", const testType test_type = ttBrute)
 {
     std::ofstream fout(output_file.c_str());
 }
@@ -146,11 +145,6 @@ std::vector<int> solveE()
 
 }
 
-std::vector<int> solveUsual()
-{
-
-}
-
 std::vector<int> brute(size_t i = 0)
 {
     static std::vector<bool> activated(applicants.size());
@@ -201,7 +195,7 @@ std::vector<int> brute(size_t i = 0)
     }
 }
 
-std::vector<int> solve(testType test_type = ttUsual)
+std::vector<int> solve(testType test_type = ttBrute)
 {
     if (test_type == ttA)
     {
@@ -211,12 +205,28 @@ std::vector<int> solve(testType test_type = ttUsual)
     {
         return solveB();
     }
+    else if (test_type == ttC)
+    {
+        return solveC();
+    }
+    else if (test_type == ttD)
+    {
+        return solveD();
+    }
+    else if (test_type == ttE)
+    {
+        return solveE();
+    }
+    else
+    {
+        return brute();
+    }
 }
 
 int main()
 {
     fileInput();
-    std::vector<int> result = solve(ttA);
+    std::vector<int> result = solve(ttBrute);
 
     cout << "You should take applicants number\n";
     for (size_t i = 0; i < result.size(); i++)
