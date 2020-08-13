@@ -3,6 +3,8 @@
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
+#include <random>
+#include <time.h>
 
 using std::cout;
 using std::cin;
@@ -30,6 +32,11 @@ struct Applicant
 
 std::vector<WorkCategory> works;
 std::vector<Applicant> applicants;
+
+int randomRange(int bottom, int up)
+{
+    return (rand() % (up - bottom)) + bottom;
+}
 
 void fileInput(const std::string& input_file = "input.txt")
 {
@@ -86,27 +93,126 @@ int countScore(const std::vector<bool> &activated)
             result += applicantScore(applicants[i]);
         }
     }
+    return result;
+}
+
+bool isWorks(std::vector<bool> &activated)
+{
+    std::vector<int> N(works.size());
+
+    for (size_t i = 0; i < activated.size(); i++)
+    {
+        if (activated[i])
+        {
+            for (size_t j = 0; j < applicants[i].skills.size(); j++)
+            {
+                N[applicants[i].skills[j]]++;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < N.size(); i++)
+    {
+        if (N[i] < works[i].N)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void generateTest(const std::string& output_file = "input.txt", const testType test_type = ttBrute)
 {
+    srand(time(0));
     std::ofstream fout(output_file.c_str());
-}
 
-bool foo(const Applicant &applicant)
-{
-    return true;
+    int n = randomRange(1, 10);
+
+    std::vector<WorkCategory> _works(n);
+
+    int works_count = 0;
+    for (int i = 0; i < n; i++)
+    {
+        _works[i].N = randomRange(1, 10);
+        works_count += _works[i].N;
+    }
+    for (int i = 0; i < n; i++)
+    {
+        _works[i].P = randomRange(1, 10);
+    }
+
+
+    int m = works_count + randomRange(1, 10);
+    std::vector<Applicant> _applicants(m);
+
+    for (size_t i = 0; i < _works.size(); i++)
+    {
+        for (size_t j = 0; j < _works[i].N; j++)
+        {
+            size_t q = randomRange(0, m);
+            while (_applicants[q].skills.size() > 0 && std::find(_applicants[q].skills.begin(), _applicants[q].skills.end(), i + 1) != _applicants[q].skills.end())
+            {
+                q = randomRange(0, m);
+            }
+            _applicants[q].skills.push_back(i + 1);
+        }
+    }
+
+    int random_count = randomRange(10, 15);
+    for (size_t i = 0; i < random_count; i++)
+    {
+        size_t q = randomRange(0, m);
+        size_t push_random = randomRange(0, _works.size()) + 1;
+        while (_applicants[q].skills.size() > 0 && std::find(_applicants[q].skills.begin(), _applicants[q].skills.end(), push_random) != _applicants[q].skills.end())
+        {
+            push_random = randomRange(0, _works.size()) + 1;
+            q = randomRange(0, m);
+        }
+
+        _applicants[q].skills.push_back(push_random);
+    }
+    _applicants.erase(std::remove_if(_applicants.begin(), _applicants.end(), [&](const Applicant &applicant) { return applicant.skills.size() == 0; }), _applicants.end());
+
+    m = _applicants.size();
+
+    fout << n << ' ' << m << '\n';
+
+    for (int i = 0; i < n; i++)
+    {
+        fout << _works[i].N << ' ';
+    }
+    fout << '\n';
+    for (int i = 0; i < n; i++)
+    {
+        fout << _works[i].P << ' ';
+    }
+    fout << '\n';
+
+    for (int i = 0; i < m; i++)
+    {
+        fout << _applicants[i].skills.size() << ' ';
+        for (int j = 0; j < _applicants[i].skills.size(); j++)
+        {
+            fout << _applicants[i].skills[j] << ' ';
+        }
+        fout << '\n';
+    }
+    fout.close();
+    cout << "end";
 }
 
 std::vector<int> solveA()
 {
     std::vector<int> result;
 
-    std::vector<Applicant>::iterator it = applicants.begin();
-    for (int i = 0; i < works.size(); i++)
+    for (int i = 0; i < applicants.size(); i++)
     {
-        it = std::find_if(it, applicants.end(), [&i](const Applicant &applicant) { return applicant.skills[0] == i; });
-        result.push_back(it - applicants.begin());
+        if (works[applicants[i].skills[0]].N > 0)
+        {
+            works[applicants[i].skills[0]].N--;
+            result.push_back(i);
+        }
     }
 
     return result;
@@ -149,7 +255,7 @@ std::vector<int> brute(size_t i = 0)
 {
     static std::vector<bool> activated(applicants.size());
 
-    static int min_score = INT_MIN;
+    static int min_score = INT_MAX;
     static std::vector<int> best_result;
 
     activated[i] = false;
@@ -159,15 +265,19 @@ std::vector<int> brute(size_t i = 0)
     }
     else
     {
-        if (min_score < countScore(activated))
+        if (isWorks(activated))
         {
-            best_result.clear();
-
-            for (size_t i = 0; i < activated.size(); i++)
+            int countScore_result = countScore(activated);
+            if (countScore_result < min_score)
             {
-                if (activated[i])
+                min_score = countScore_result;
+                best_result.clear();
+                for (size_t i = 0; i < activated.size(); i++)
                 {
-                    best_result.push_back(i);
+                    if (activated[i])
+                    {
+                        best_result.push_back(i);
+                    }
                 }
             }
         }
@@ -180,19 +290,25 @@ std::vector<int> brute(size_t i = 0)
     }
     else
     {
-        if (min_score < countScore(activated))
+        if (isWorks(activated))
         {
-            best_result.clear();
-
-            for (size_t i = 0; i < activated.size(); i++)
+            int countScore_result = countScore(activated);
+            if (countScore_result < min_score)
             {
-                if (activated[i])
+                min_score = countScore_result;
+                best_result.clear();
+                for (size_t i = 0; i < activated.size(); i++)
                 {
-                    best_result.push_back(i);
+                    if (activated[i])
+                    {
+                        best_result.push_back(i);
+                    }
                 }
             }
         }
     }
+
+    return best_result;
 }
 
 std::vector<int> solve(testType test_type = ttBrute)
@@ -225,6 +341,7 @@ std::vector<int> solve(testType test_type = ttBrute)
 
 int main()
 {
+    generateTest();
     fileInput();
     std::vector<int> result = solve(ttBrute);
 
