@@ -130,11 +130,10 @@ void generateTest(const std::string& output_file = "input.txt", const testType t
     int n = randomRange(1, 10);
 
     std::vector<WorkCategory> _works(n);
-
     int works_count = 0;
     for (int i = 0; i < n; i++)
     {
-        _works[i].N = randomRange(1, 10);
+        _works[i].N = randomRange(1, 5);
         works_count += _works[i].N;
     }
     for (int i = 0; i < n; i++)
@@ -142,8 +141,7 @@ void generateTest(const std::string& output_file = "input.txt", const testType t
         _works[i].P = randomRange(1, 10);
     }
 
-
-    int m = works_count + randomRange(1, 10);
+    int m = works_count + randomRange(1, 15);
     std::vector<Applicant> _applicants(m);
 
     for (size_t i = 0; i < _works.size(); i++)
@@ -159,7 +157,7 @@ void generateTest(const std::string& output_file = "input.txt", const testType t
         }
     }
 
-    int random_count = randomRange(10, 15);
+    int random_count = randomRange(0, n);
     for (size_t i = 0; i < random_count; i++)
     {
         size_t q = randomRange(0, m);
@@ -199,7 +197,6 @@ void generateTest(const std::string& output_file = "input.txt", const testType t
         fout << '\n';
     }
     fout.close();
-    cout << "end";
 }
 
 std::vector<int> solveA()
@@ -344,7 +341,6 @@ int main()
     generateTest();
     fileInput();
     std::vector<int> result = solve(ttBrute);
-
     cout << "You should take applicants number\n";
     for (size_t i = 0; i < result.size(); i++)
     {
