@@ -14,6 +14,7 @@
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -23,6 +24,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -33,7 +35,17 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Data.h" />
+		<Unit filename="include/Generator.h" />
+		<Unit filename="include/Input.h" />
+		<Unit filename="include/Random.h" />
+		<Unit filename="include/Solve.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Data.cpp" />
+		<Unit filename="src/Generator.cpp" />
+		<Unit filename="src/Input.cpp" />
+		<Unit filename="src/Random.cpp" />
+		<Unit filename="src/Solve.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
