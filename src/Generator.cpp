@@ -99,7 +99,7 @@ void generateTestA(std::vector<WorkCategory> &_works, std::vector<Applicant> &_a
         }
     }
 
-    int random_count = randomRange(0, works_N_count - applicants.size());
+    int random_count = randomRange(0, _applicants.size() - works_N_count);
     for (size_t i = 0; i < random_count; i++)
     {
         size_t q = randomRange(0, _applicants.size());
@@ -108,7 +108,7 @@ void generateTestA(std::vector<WorkCategory> &_works, std::vector<Applicant> &_a
         while (_applicants[q].skills.size() > 0)
         {
             q = randomRange(0, _applicants.size());
-            size_t push_random = randomRange(0, _works.size());
+            push_random = randomRange(0, _works.size());
         }
 
         _applicants[q].skills.push_back(push_random + 1);
@@ -189,7 +189,7 @@ void generateTestC(std::vector<WorkCategory> &_works, std::vector<Applicant> &_a
 
 void generateTestD(std::vector<WorkCategory> &_works, std::vector<Applicant> &_applicants)
 {
-_works.resize(randomRange(1, 10));
+    _works.resize(randomRange(1, 10));
 
     int works_N_count = 0;
     int works_P_random = randomRange(1, 5);

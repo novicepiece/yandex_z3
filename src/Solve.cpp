@@ -36,7 +36,7 @@ std::vector<int> solveB()
 
 std::vector<int> solveC()
 {
-
+    return brute();
 }
 
 std::vector<int> solveD()
@@ -49,77 +49,63 @@ std::vector<int> solveE()
     return brute();
 }
 
-std::vector<int> brute(size_t i)
+bool next_combination(std::vector<int> &current)
 {
-    static std::vector<bool> activated(applicants.size());
+    int n = applicants.size() - 1;
+    int k = current.size();
+    for (int i = k - 1; i >= 0; i--)
+    {
+        if (current[i] < n - k + i + 1)
+        {
+            current[i]++;
+            for (int j = i + 1; j < k; j++)
+            {
+                current[j] = current[j - 1] + 1;
+            }
+            return true;
+        }
+    }
+    return false;
+}
 
-    static int min_score = INT_MAX;
-    static std::vector<int> best_result;
-    static int min_possible_score = 0;
+std::vector<int> brute()
+{
+    std::vector<bool> activated(applicants.size());
 
+    int min_score = INT_MAX;
+    std::vector<int> best_result;
+    int min_possible_score = 0;
+
+    int max_P = 0;
+    int max_N = 0;
     for (size_t i = 0; i < works.size(); i++)
     {
-        min_possible_score += works[i].P;
+        max_N = std::max(max_N, works[i].N);
+        max_P = std::max(max_P, works[i].P);
     }
 
-    activated[i] = false;
-    if (i < applicants.size() - 1)
+    min_possible_score = max_P * max_N;
+
+    std::vector<int> current;
+
+    for (int i = 1; i <= applicants.size(); i++)
     {
-        brute(i + 1);
-    }
-    else
-    {
-        if (isWorks(activated))
+        current.resize(i);
+        std::iota(current.begin(), current.end(), 0);
+
+        do
         {
-            int countScore_result = countScore(activated);
-            if (countScore_result < min_score)
+            int current_score = countScore(current);
+            if (min_score > current_score && isWorks(current))
             {
-                min_score = countScore_result;
-                best_result.clear();
-                for (size_t i = 0; i < activated.size(); i++)
-                {
-                    if (activated[i])
-                    {
-                        best_result.push_back(i);
-                    }
-                }
-
+                min_score = current_score;
+                best_result = current;
                 if (min_score == min_possible_score)
                 {
                     return best_result;
                 }
             }
-        }
-    }
-
-    activated[i] = true;
-    if (i < applicants.size() - 1)
-    {
-        brute(i + 1);
-    }
-    else
-    {
-        if (isWorks(activated))
-        {
-            int countScore_result = countScore(activated);
-            if (countScore_result < min_score)
-            {
-                min_score = countScore_result;
-                best_result.clear();
-                for (size_t i = 0; i < activated.size(); i++)
-                {
-                    if (activated[i])
-                    {
-                        best_result.push_back(i);
-                    }
-                }
-
-                if (min_score == min_possible_score)
-                {
-                    return best_result;
-                }
-            }
-        }
+        } while (next_combination(current));
     }
 
     return best_result;

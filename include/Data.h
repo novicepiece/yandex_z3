@@ -30,9 +30,8 @@ extern std::vector<WorkCategory> works;
 extern std::vector<Applicant> applicants;
 
 int applicantScore(Applicant applicant);
-int countScore(const std::vector<bool> &activated);
 int countScore(const std::vector<int> &activated);
-bool isWorks(std::vector<bool> &activated);
+bool isWorks(std::vector<int> &activated);
 
 
 #endif // DATA_H_INCLUDED

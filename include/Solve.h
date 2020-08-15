@@ -12,6 +12,7 @@ std::vector<int> solveB();
 std::vector<int> solveC();
 std::vector<int> solveD();
 std::vector<int> solveE();
-std::vector<int> brute(size_t i = 0);
+std::vector<int> brute();
+bool next_combination(std::vector<int> &current);
 
 #endif // SOLVE_H_INCLUDED

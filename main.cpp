@@ -11,7 +11,7 @@ std::vector<Applicant> applicants;
 
 int main()
 {
-    const testType test_type = ttBrute;
+    const testType test_type = ttC;
     generateTest(test_type);
     fileInput();
     std::vector<int> result = solve(test_type);
@@ -24,7 +24,15 @@ int main()
 
     int solved_score = countScore(result);
     fileInput();
-    int brute_score = countScore(solve(ttBrute));
+    std::vector<int> brute_result = solve(ttBrute);
+    int brute_score = countScore(brute_result);
+
+    cout << "Brute solution\n";
+    for (size_t i = 0; i < brute_result.size(); i++)
+    {
+        cout << brute_result[i] + 1 << " ";
+    }
+    cout << "\n";
 
     cout << solved_score << " " << brute_score << "\n" << (brute_score == solved_score) << "\n";
     return 0;
